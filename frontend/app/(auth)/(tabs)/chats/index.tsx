@@ -1,7 +1,12 @@
-import { Text } from "react-native";
+import { SafeAreaView, FlatList, Text } from "react-native";
+import { GossipHeading } from "../../../../components/text";
 
 const Page = () => {
-  return <Text>Index page of Chats Tab</Text>;
+  return (
+    <SafeAreaView>
+      <GossipHeading>Chats</GossipHeading>
+    </SafeAreaView>
+  );
 };
 
 export default Page;
