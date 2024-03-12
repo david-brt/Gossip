@@ -1,10 +1,66 @@
-import { SafeAreaView, FlatList, Text } from "react-native";
+import { SafeAreaView, FlatList, Text, StyleSheet, View } from "react-native";
 import { GossipHeading } from "../../../../components/text";
+
+// dummy rooms
+const rooms = [
+  {
+    id: "1",
+    name: "Novu Hangouts",
+    messages: [
+      {
+        id: "1a",
+        text: "Hello guys, welcome!",
+        time: "07:50",
+        user: "Tomer",
+      },
+      {
+        id: "1b",
+        text: "Hi Tomer, thank you! 😇",
+        time: "08:50",
+        user: "David",
+      },
+    ],
+  },
+  {
+    id: "2",
+    name: "Hacksquad Team 1",
+    messages: [
+      {
+        id: "2a",
+        text: "Guys, who's awake? 🙏🏽",
+        time: "12:50",
+        user: "Team Leader",
+      },
+      {
+        id: "2b",
+        text: "What's up? 🧑🏻‍💻",
+        time: "03:50",
+        user: "Victoria",
+      },
+    ],
+  },
+];
+
+const styles = StyleSheet.create({
+  container: {
+    margin: "auto",
+    padding: 10,
+  },
+  chatContainer: {},
+});
 
 const Page = () => {
   return (
     <SafeAreaView>
-      <GossipHeading>Chats</GossipHeading>
+      <View style={styles.container}>
+        <GossipHeading>Chats</GossipHeading>
+        <FlatList
+          data={rooms}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <Text>{item.name}</Text>}
+          style={styles.chatContainer}
+        />
+      </View>
     </SafeAreaView>
   );
 };
