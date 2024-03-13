@@ -1,6 +1,6 @@
 import { View, FlatList } from "react-native";
-import { GossipText } from "./text";
 import type { Room } from "../types";
+import ChatListItem from "./ChatListItem";
 
 const styles = {
   container: {},
@@ -16,7 +16,7 @@ const ChatList = ({ rooms }: ChatListProps) => {
       <FlatList
         data={rooms}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <GossipText>{item.name}</GossipText>}
+        renderItem={({ item }) => <ChatListItem room={item}></ChatListItem>}
         style={styles.container}
       />
     </View>

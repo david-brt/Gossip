@@ -8,7 +8,8 @@ interface TextProps {
 
 // custom text component to facilitate global modifications
 export const GossipText = ({ children, style }: TextProps) => {
-  return <Text style={style}>{children}</Text>;
+  const textStyles = StyleSheet.compose(styles.text, style);
+  return <Text style={textStyles}>{children}</Text>;
 };
 
 export const GossipHeading = ({ children }: TextProps) => {
@@ -16,6 +17,9 @@ export const GossipHeading = ({ children }: TextProps) => {
 };
 
 const styles = StyleSheet.create({
+  text: {
+    fontSize: 16,
+  },
   h1: {
     fontSize: 32,
     fontWeight: "bold",

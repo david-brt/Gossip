@@ -1,4 +1,4 @@
-import { SafeAreaView, FlatList, Text, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import { GossipHeading } from "../../../../components/text";
 import ChatList from "../../../../components/ChatList";
 
@@ -44,7 +44,10 @@ const rooms = [
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: 16,
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
   },
 });
 
