@@ -1,5 +1,6 @@
 import { SafeAreaView, FlatList, Text, StyleSheet, View } from "react-native";
 import { GossipHeading } from "../../../../components/text";
+import ChatList from "../../../../components/ChatList";
 
 // dummy rooms
 const rooms = [
@@ -43,10 +44,8 @@ const rooms = [
 
 const styles = StyleSheet.create({
   container: {
-    margin: "auto",
     padding: 10,
   },
-  chatContainer: {},
 });
 
 const Page = () => {
@@ -54,12 +53,7 @@ const Page = () => {
     <SafeAreaView>
       <View style={styles.container}>
         <GossipHeading>Chats</GossipHeading>
-        <FlatList
-          data={rooms}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <Text>{item.name}</Text>}
-          style={styles.chatContainer}
-        />
+        <ChatList rooms={rooms} />
       </View>
     </SafeAreaView>
   );
