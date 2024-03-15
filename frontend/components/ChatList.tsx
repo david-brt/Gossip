@@ -2,9 +2,7 @@ import { View, FlatList } from "react-native";
 import type { Room } from "../types";
 import ChatListItem from "./ChatListItem";
 
-const styles = {
-  container: {},
-};
+const styles = {};
 
 interface ChatListProps {
   rooms: Room[];
@@ -17,7 +15,7 @@ const ChatList = ({ rooms }: ChatListProps) => {
         data={rooms}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ChatListItem room={item}></ChatListItem>}
-        style={styles.container}
+        ItemSeparatorComponent={() => <View style={{ height: 24 }}></View>}
       />
     </View>
   );
