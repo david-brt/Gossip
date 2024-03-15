@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 
 const TabsLayout = () => {
-  return <Stack />;
+  return <Stack screenOptions={{ headerShadowVisible: false }} />;
 };
 
 export default TabsLayout;
