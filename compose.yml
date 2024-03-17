@@ -1,9 +1,19 @@
 version: '3.9'
 
 services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: 'gossip-air'
+    ports:
+      - 8910:8910
+    volumes:
+      - ./server/:/app/
+
   db:
     image: postgres
-    container_name: 'pg-gossip'
+    container_name: 'gossip-pg'
     ports:
       - 6543:5432
     restart: unless-stopped

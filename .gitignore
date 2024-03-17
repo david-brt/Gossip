@@ -24,6 +24,8 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
+server/tmp
+
 # macOS
 .DS_Store
 *.pem
