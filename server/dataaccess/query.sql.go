@@ -26,3 +26,46 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, 
 	err := row.Scan(&user_id)
 	return user_id, err
 }
+
+const existsUserByPhoneNumber = `-- name: ExistsUserByPhoneNumber :one
+SELECT EXISTS (SELECT 1 FROM users WHERE phone_number = $1) AS exists
+`
+
+func (q *Queries) ExistsUserByPhoneNumber(ctx context.Context, phoneNumber string) (bool, error) {
+	row := q.db.QueryRow(ctx, existsUserByPhoneNumber, phoneNumber)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const getUser = `-- name: GetUser :one
+SELECT user_id, username, phone_number, profile_picture FROM users WHERE user_id = $1 LIMIT 1
+`
+
+func (q *Queries) GetUser(ctx context.Context, userID int32) (User, error) {
+	row := q.db.QueryRow(ctx, getUser, userID)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.Username,
+		&i.PhoneNumber,
+		&i.ProfilePicture,
+	)
+	return i, err
+}
+
+const getUserByPhoneNumber = `-- name: GetUserByPhoneNumber :one
+SELECT user_id, username, phone_number, profile_picture FROM users WHERE phone_number = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByPhoneNumber(ctx context.Context, phoneNumber string) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByPhoneNumber, phoneNumber)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.Username,
+		&i.PhoneNumber,
+		&i.ProfilePicture,
+	)
+	return i, err
+}
