@@ -13,7 +13,7 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.GET("/signup", func(c *gin.Context) {
+	r.POST("/signup", func(c *gin.Context) {
 		handlers.Signup(c)
 	})
 	r.GET("/login", func(c *gin.Context) {
