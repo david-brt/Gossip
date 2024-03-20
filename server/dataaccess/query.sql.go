@@ -10,18 +10,13 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (username, phone_number)
-VALUES ($1, $2)
+INSERT INTO users (phone_number)
+VALUES ($1)
 RETURNING user_id
 `
 
-type CreateUserParams struct {
-	Username    string
-	PhoneNumber string
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Username, arg.PhoneNumber)
+func (q *Queries) CreateUser(ctx context.Context, phoneNumber string) (int32, error) {
+	row := q.db.QueryRow(ctx, createUser, phoneNumber)
 	var user_id int32
 	err := row.Scan(&user_id)
 	return user_id, err

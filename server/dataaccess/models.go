@@ -10,7 +10,7 @@ import (
 
 type User struct {
 	UserID         int32
-	Username       string
+	Username       pgtype.Text
 	PhoneNumber    string
 	ProfilePicture pgtype.Text
 }

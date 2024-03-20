@@ -35,3 +35,6 @@ server/tmp
 
 # typescript
 *.tsbuildinfo
+
+# database
+pg-data/

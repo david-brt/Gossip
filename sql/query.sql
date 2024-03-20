@@ -8,6 +8,6 @@ SELECT EXISTS (SELECT 1 FROM users WHERE phone_number = $1) AS exists;
 SELECT * FROM users WHERE phone_number = $1 LIMIT 1;
 
 -- name: CreateUser :one
-INSERT INTO users (username, phone_number)
-VALUES ($1, $2)
+INSERT INTO users (phone_number)
+VALUES ($1)
 RETURNING user_id;
