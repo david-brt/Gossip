@@ -37,6 +37,17 @@ func Signup(c *gin.Context) {
 		})
 		return
 	}
+
+	err = createUser(json.Number)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured."})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User created"})
+	return
+
 }
 
 func numberExists(number string) (bool, error) {
@@ -57,4 +68,19 @@ func numberExists(number string) (bool, error) {
 	}
 
 	return exists, nil
+}
+
+func createUser(number string) error {
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, "host=db user=gossip dbname=gossip password=postgres")
+	if err != nil {
+		return err
+	}
+
+	defer conn.Close(ctx)
+
+	queries := dataaccess.New(conn)
+
+	_, err = queries.CreateUser(ctx, number)
+	return err
 }
