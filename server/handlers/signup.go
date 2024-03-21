@@ -5,11 +5,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/google/uuid"
 
 	"Gossip/backend/dataaccess"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type PhoneNumber struct {
@@ -24,63 +26,91 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	exists, err := numberExists(json.Number)
+	userId, err := numberExists(json.Number)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured."})
 		return
 	}
 
-	if exists {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "User exists",
-		})
-		return
+	message := "User signed in"
+	if userId == -1 {
+		message = "User created"
+		userId, err = createUser(json.Number)
+		if err != nil {
+			log.Println(err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured."})
+			return
+		}
 	}
 
-	err = createUser(json.Number)
+	sessionId, err := createSession(userId)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured."})
 		return
+
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User created"})
+	c.JSON(http.StatusOK, gin.H{
+		"message": message,
+		"session": sessionId})
 	return
 
 }
 
-func numberExists(number string) (bool, error) {
+func numberExists(number string) (int32, error) {
 	ctx := context.Background()
 	conn, err := pgx.Connect(ctx, "host=db user=gossip dbname=gossip password=postgres")
 	if err != nil {
-		return false, err
+		return -1, err
 	}
 
 	defer conn.Close(ctx)
 
 	queries := dataaccess.New(conn)
 
-	exists, err := queries.ExistsUserByPhoneNumber(ctx, number)
-
+	id, err := queries.GetUserByPhoneNumber(ctx, number)
 	if err != nil {
-		return false, err
+		if err == pgx.ErrNoRows {
+			return -1, nil
+		}
+		return -1, err
 	}
-
-	return exists, nil
+	return id.UserID, nil
 }
 
-func createUser(number string) error {
+func createUser(number string) (int32, error) {
 	ctx := context.Background()
 	conn, err := pgx.Connect(ctx, "host=db user=gossip dbname=gossip password=postgres")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	defer conn.Close(ctx)
 
 	queries := dataaccess.New(conn)
 
-	_, err = queries.CreateUser(ctx, number)
-	return err
+	userId, err := queries.CreateUser(ctx, number)
+	return userId, err
+}
+
+func createSession(userId int32) (string, error) {
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, "host=db user=gossip dbname=gossip password=postgres")
+	if err != nil {
+		return "", err
+	}
+
+	defer conn.Close(ctx)
+
+	queries := dataaccess.New(conn)
+
+	params := dataaccess.CreateSessionParams{
+		UserID:    pgtype.Int4{Int32: userId, Valid: true},
+		SessionID: uuid.New().String(),
+	}
+
+	s, err := queries.CreateSession(ctx, params)
+	return s.SessionID, err
 }

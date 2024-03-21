@@ -7,7 +7,32 @@ package dataaccess
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+const createSession = `-- name: CreateSession :one
+INSERT INTO sessions (user_id, session_id)
+VALUES ($1, $2)
+RETURNING user_id, session_id, created_at, expires_at
+`
+
+type CreateSessionParams struct {
+	UserID    pgtype.Int4
+	SessionID string
+}
+
+func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error) {
+	row := q.db.QueryRow(ctx, createSession, arg.UserID, arg.SessionID)
+	var i Session
+	err := row.Scan(
+		&i.UserID,
+		&i.SessionID,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+	)
+	return i, err
+}
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (phone_number)
@@ -31,6 +56,23 @@ func (q *Queries) ExistsUserByPhoneNumber(ctx context.Context, phoneNumber strin
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
+}
+
+const getSession = `-- name: GetSession :one
+SELECT user_id, session_id, created_at, expires_at FROM sessions
+WHERE user_id = $1 LIMIT 1
+`
+
+func (q *Queries) GetSession(ctx context.Context, userID pgtype.Int4) (Session, error) {
+	row := q.db.QueryRow(ctx, getSession, userID)
+	var i Session
+	err := row.Scan(
+		&i.UserID,
+		&i.SessionID,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+	)
+	return i, err
 }
 
 const getUser = `-- name: GetUser :one
