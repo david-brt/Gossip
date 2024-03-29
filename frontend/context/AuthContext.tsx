@@ -1,45 +1,38 @@
 import * as SecureStore from "expo-secure-store";
 import { useRouter, useSegments } from "expo-router";
-import {
-  useQuery,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createContext, PropsWithChildren } from "react";
 
 const AuthContext = createContext({});
-const queryClient = new QueryClient();
 
 async function loadToken() {
   try {
-    const token = await SecureStore.getItemAsync("token");
-    return token;
+    return SecureStore.getItemAsync("token");
   } catch (error) {
-    console.error("Error loading token");
+    console.error("An error has occured", error);
+    return null;
   }
 }
 
 const AuthContextProvider = ({ children }: PropsWithChildren) => {
   const isAuth = useSegments()[0] === "(auth)";
   const router = useRouter();
-  const {
-    status,
-    data: token,
-    error,
-  } = useQuery({
+  const { status, data: token } = useQuery({
     queryKey: ["token"],
     queryFn: loadToken,
   });
 
-  if (isAuth && !token) {
-    router.replace("/(public)/signup");
-  }
-  if (token) {
-    router.replace("/(auth)/");
-  }
+  useEffect(() => {
+    if (status === "error" || (isAuth && !token)) {
+      router.replace("/signup");
+    } else if (token) {
+      router.replace("/");
+    }
+  }, [status, token, isAuth, router]);
 
   return (
-    <AuthContext.Provider value={{ authToken: token }}>
+    <AuthContext.Provider value={{ authToken: token ? token : "" }}>
       {children}
     </AuthContext.Provider>
   );
