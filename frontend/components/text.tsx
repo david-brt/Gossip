@@ -8,7 +8,7 @@ interface TextProps {
 
 // custom text component to facilitate global modifications
 export const GossipText = ({ children, style }: TextProps) => {
-  const textStyles = StyleSheet.compose(styles.text, style);
+  const textStyles = [styles.text, style];
   return <Text style={textStyles}>{children}</Text>;
 };
 

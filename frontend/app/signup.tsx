@@ -6,12 +6,15 @@ import {
   TouchableWithoutFeedback,
   View,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import Colors from "../constants/Colors";
 import { GossipText } from "../components/text";
 import { useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useMutation } from "@tanstack/react-query";
 import MaskInput from "react-native-mask-input";
+import { createUser } from "../lib/api";
 
 const GER_PHONE = [
   `+`,
@@ -73,6 +76,12 @@ const styles = StyleSheet.create({
 const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const insets = useSafeAreaInsets();
+  const { isPending, mutate } = useMutation({
+    mutationFn: (phoneNumber: string) => createUser(phoneNumber),
+  });
+  const onPress = () => {
+    mutate(phoneNumber);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -90,7 +99,7 @@ const Signup = () => {
             <MaskInput
               value={phoneNumber}
               autoFocus
-              keyboardType="numeric"
+              inputMode="numeric"
               style={styles.input}
               placeholder="+49 deine Telefonnummer"
               onChangeText={(_, unmasked) => {
@@ -100,8 +109,10 @@ const Signup = () => {
             />
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button}>
-              <GossipText style={styles.buttonText}>Fortfahren</GossipText>
+            <TouchableOpacity style={styles.button} onPress={onPress}>
+              {(!isPending && (
+                <GossipText style={styles.buttonText}>Fortfahren</GossipText>
+              )) || <ActivityIndicator />}
             </TouchableOpacity>
           </View>
         </View>
