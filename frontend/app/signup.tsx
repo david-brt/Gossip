@@ -10,11 +10,12 @@ import {
 } from "react-native";
 import Colors from "../constants/Colors";
 import { GossipText } from "../components/text";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useMutation } from "@tanstack/react-query";
 import MaskInput from "react-native-mask-input";
 import { createUser } from "../lib/api";
+import { router } from "expo-router";
 
 const GER_PHONE = [
   `+`,
@@ -76,12 +77,19 @@ const styles = StyleSheet.create({
 const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const insets = useSafeAreaInsets();
-  const { isPending, mutate } = useMutation({
+  const { isPending, isSuccess, mutate } = useMutation({
     mutationFn: (phoneNumber: string) => createUser(phoneNumber),
   });
+
   const onPress = () => {
     mutate(phoneNumber);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      router.replace(`otp/${phoneNumber}`);
+    }
+  }, [isSuccess]);
 
   return (
     <KeyboardAvoidingView
