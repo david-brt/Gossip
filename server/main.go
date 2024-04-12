@@ -24,8 +24,5 @@ func main() {
 	r.POST("/signup", func(c *gin.Context) {
 		handlers.Signup(c)
 	})
-	r.GET("/login", func(c *gin.Context) {
-		handlers.Login(c)
-	})
 	r.Run(":8910")
 }
