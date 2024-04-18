@@ -43,8 +43,7 @@ const styles = StyleSheet.create({
   inner: {
     flex: 1,
     justifyContent: "space-around",
-    paddingHorizontal: 24,
-    paddingTop: 24,
+    padding: 24,
   },
   list: {
     flex: 1,
@@ -95,7 +94,6 @@ const Signup = () => {
     <KeyboardAvoidingView
       style={{
         flex: 1,
-        paddingTop: insets.top,
       }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={insets.top}

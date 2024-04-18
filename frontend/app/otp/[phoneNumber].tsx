@@ -1,29 +1,48 @@
-import { View, StyleSheet, Text } from "react-native";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Keyboard,
+  Platform,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   CodeField,
   Cursor,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Colors from "../../constants/Colors";
+import { GossipText } from "../../components/text";
+import { router } from "expo-router";
 
 const OTP_LENGTH = 6;
 
 const styles = StyleSheet.create({
-  root: { flex: 1, padding: 20 },
-  title: { textAlign: "center", fontSize: 30 },
-  codeFieldRoot: { marginTop: 20 },
+  container: { flex: 1, padding: 24 },
+  inner: { flex: 1, gap: 20 },
+  codeField: { flex: 1, gap: 10 },
+  cellContainer: {
+    flex: 1,
+    height: 42,
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.secondaryBackground,
+  },
   cell: {
-    width: 40,
-    height: 40,
+    flex: 1,
     lineHeight: 38,
     fontSize: 24,
-    borderWidth: 2,
-    borderColor: "#00000030",
     textAlign: "center",
   },
   focusCell: {
-    borderColor: "#000",
+    backgroundColor: Colors.secondary,
+    color: Colors.secondaryFont,
   },
 });
 
@@ -34,27 +53,45 @@ const OTP = () => {
     value,
     setValue,
   });
+  useEffect(() => {
+    if (value.length === OTP_LENGTH) {
+      Keyboard.dismiss();
+      router.replace("/chats");
+    }
+  }, [value]);
   return (
-    <View
-      style={{
-        paddingTop: insets.top,
-      }}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={insets.top}
     >
-      <CodeField
-        cellCount={OTP_LENGTH}
-        value={value}
-        {...props}
-        renderCell={({ index, symbol, isFocused }) => (
-          <Text
-            key={index}
-            style={[styles.cell, isFocused && styles.focusCell]}
-            onLayout={getCellOnLayoutHandler(index)}
-          >
-            {symbol || (isFocused ? <Cursor /> : null)}
-          </Text>
-        )}
-      />
-    </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.inner}>
+          <GossipText>Gib deinen SMS-Bestätigungscode ein:</GossipText>
+          <CodeField
+            {...props}
+            value={value}
+            onChangeText={setValue}
+            cellCount={OTP_LENGTH}
+            rootStyle={styles.codeField}
+            keyboardType="number-pad"
+            renderCell={({ index, symbol, isFocused }) => {
+              return (
+                <View
+                  style={[styles.cellContainer, isFocused && styles.focusCell]}
+                  onLayout={getCellOnLayoutHandler(index)}
+                  key={index}
+                >
+                  <Text style={styles.cell}>
+                    {symbol || (isFocused ? <Cursor /> : null)}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
