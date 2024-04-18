@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createContext, PropsWithChildren } from "react";
 
-const AuthContext = createContext({});
+export const AuthContext = createContext({ refetch: () => {}, authToken: "" });
 
 async function loadToken() {
   try {
@@ -15,10 +15,14 @@ async function loadToken() {
   }
 }
 
-const AuthContextProvider = ({ children }: PropsWithChildren) => {
+export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   const isAuth = useSegments()[0] === "(auth)";
   const router = useRouter();
-  const { status, data: token } = useQuery({
+  const {
+    status,
+    data: token,
+    refetch,
+  } = useQuery({
     queryKey: ["token"],
     queryFn: loadToken,
   });
@@ -26,16 +30,12 @@ const AuthContextProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (status === "error" || (isAuth && !token)) {
       router.replace("/signup");
-    } else if (token) {
-      router.replace("/");
     }
-  }, [status, token, isAuth, router]);
+  }, [token]);
 
   return (
-    <AuthContext.Provider value={{ authToken: token ? token : "" }}>
+    <AuthContext.Provider value={{ authToken: token ? token : "", refetch }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export default AuthContextProvider;

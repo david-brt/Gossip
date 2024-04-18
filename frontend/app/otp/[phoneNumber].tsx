@@ -1,6 +1,5 @@
 import {
   View,
-  TextInput,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
@@ -14,10 +13,11 @@ import {
   Cursor,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Colors from "../../constants/Colors";
 import { GossipText } from "../../components/text";
 import { router } from "expo-router";
+import { AuthContext } from "../../context/AuthContext";
 
 const OTP_LENGTH = 6;
 
@@ -53,9 +53,12 @@ const OTP = () => {
     value,
     setValue,
   });
+  const { authToken, refetch } = useContext(AuthContext);
+
   useEffect(() => {
     if (value.length === OTP_LENGTH) {
       Keyboard.dismiss();
+      refetch();
       router.replace("/chats");
     }
   }, [value]);

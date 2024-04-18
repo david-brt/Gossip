@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { View } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AuthContextProvider from "../context/AuthContext";
+import { AuthContextProvider } from "../context/AuthContext";
 import Colors from "../constants/Colors";
 import {
   SafeAreaProvider,
