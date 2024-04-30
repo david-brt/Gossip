@@ -28,10 +28,11 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   });
 
   useEffect(() => {
+    if (status === "pending") return;
     if (status === "error" || (isAuth && !token)) {
       router.replace("/signup");
     }
-  }, [token]);
+  }, [token, status]);
 
   return (
     <AuthContext.Provider value={{ authToken: token ? token : "", refetch }}>

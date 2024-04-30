@@ -1,7 +1,8 @@
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { View } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthContextProvider } from "../context/AuthContext";
+import RoutePersistence from "../components/RoutePersistence";
 import Colors from "../constants/Colors";
 import {
   SafeAreaProvider,
@@ -16,6 +17,7 @@ const Layout = () => {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <AuthContextProvider>
+          <RoutePersistence />
           <View
             style={{
               paddingTop: insets.top,
@@ -24,7 +26,7 @@ const Layout = () => {
               backgroundColor: Colors.background,
             }}
           >
-            <Stack screenOptions={{ headerShown: false }} />
+            <Slot />
           </View>
         </AuthContextProvider>
       </QueryClientProvider>
