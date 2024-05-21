@@ -17,6 +17,7 @@
     ],
     "ios": {
       "supportsTablet": false,
+      "bundleIdentifier": "com.gossipco.gossip",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -33,7 +34,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
     ]
   }
 }
