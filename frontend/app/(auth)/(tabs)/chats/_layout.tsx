@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import HeaderRight from "../../../../components/ChatHeaderRight";
+import { StyleSheet } from "react-native";
 import Colors from "../../../../constants/Colors";
 
 const styles = StyleSheet.create({
@@ -12,18 +12,21 @@ const styles = StyleSheet.create({
 const TabsLayout = () => {
   return (
     <Stack
-      screenOptions={{ headerShadowVisible: false, headerStyle: styles.header }}
+      screenOptions={{
+        headerShadowVisible: false,
+        headerStyle: styles.header,
+      }}
     >
       <Stack.Screen
         name="index"
         options={{
           title: "Chats",
-          headerRight: () => (
-            <TouchableOpacity>
-              <AntDesign name="addusergroup" size={28} color="black" />
-            </TouchableOpacity>
-          ),
+          headerRight: () => <HeaderRight />,
         }}
+      />
+      <Stack.Screen
+        name="new-chat"
+        options={{ title: "New Chat", presentation: "modal" }}
       />
     </Stack>
   );
