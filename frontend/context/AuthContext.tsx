@@ -15,7 +15,7 @@ async function loadToken() {
   }
 }
 
-export const AuthContextProvider = ({ children }: PropsWithChildren) => {
+export const AuthProvider = ({ children }: PropsWithChildren) => {
   const isAuth = useSegments()[0] === "(auth)";
   const router = useRouter();
   const {
@@ -32,6 +32,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     if (status === "error" || (isAuth && !token)) {
       router.replace("/signup");
     }
+    router.replace("/chats");
   }, [token, status]);
 
   return (

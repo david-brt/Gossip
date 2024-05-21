@@ -1,8 +1,7 @@
 import { Slot } from "expo-router";
 import { View } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthContextProvider } from "../context/AuthContext";
-import RoutePersistence from "../components/RoutePersistence";
+import { AuthProvider } from "../context/AuthContext";
 import Colors from "../constants/Colors";
 import * as SQLite from "expo-sqlite";
 import { migrate } from "../lib/migrate";
@@ -33,8 +32,7 @@ const Layout = () => {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthContextProvider>
-          <RoutePersistence />
+        <AuthProvider>
           <View
             style={{
               paddingTop: insets.top,
@@ -45,7 +43,7 @@ const Layout = () => {
           >
             <Slot />
           </View>
-        </AuthContextProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );
