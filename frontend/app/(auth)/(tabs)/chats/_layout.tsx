@@ -1,7 +1,8 @@
 import { Stack } from "expo-router";
-import HeaderRight from "../../../../components/ChatHeaderRight";
+import ChatHeaderRight from "../../../../components/ChatHeaderRight";
 import { StyleSheet } from "react-native";
 import Colors from "../../../../constants/Colors";
+import CancelModal from "../../../../components/CancelModal";
 
 const styles = StyleSheet.create({
   header: {
@@ -21,12 +22,16 @@ const TabsLayout = () => {
         name="index"
         options={{
           title: "Chats",
-          headerRight: () => <HeaderRight />,
+          headerRight: () => <ChatHeaderRight />,
         }}
       />
       <Stack.Screen
         name="new-chat"
-        options={{ title: "New Chat", presentation: "modal" }}
+        options={{
+          title: "New Chat",
+          presentation: "modal",
+          headerLeft: () => <CancelModal />,
+        }}
       />
     </Stack>
   );
