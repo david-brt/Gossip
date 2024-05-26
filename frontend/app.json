@@ -35,6 +35,12 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-    ]
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Erlaube Gossip Zugriff auf deine Kontakte"
+        }
+      ]
+    ],
   }
 }
