@@ -30,6 +30,10 @@ const TabsLayout = () => {
         options={{
           title: "New Chat",
           presentation: "modal",
+          headerSearchBarOptions: {
+            placeholder: "Nach Namen suchen",
+            hideWhenScrolling: false,
+          },
           headerLeft: () => <CancelModal />,
         }}
       />

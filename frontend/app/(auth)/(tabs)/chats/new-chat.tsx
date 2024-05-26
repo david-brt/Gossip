@@ -1,9 +1,8 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import ContactCell from "../../../../components/ContactCell";
 import * as Contacts from "expo-contacts";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 import Colors from "../../../../constants/Colors";
 
 async function getContacts() {
@@ -95,37 +94,39 @@ const NewChat = () => {
   });
 
   return (
-    <View style={styles.container}>
-      {data && (
-        <FlashList
-          data={data.contacts}
-          renderItem={({ item, target }) => {
-            if (typeof item === "string") {
-              return (
-                <Text
-                  style={[
-                    styles.sectonHeader,
-                    target ? styles.stickyHeader : {},
-                  ]}
-                >
-                  {item}
-                </Text>
-              );
-            }
-            return <ContactCell item={item} />;
-          }}
-          estimatedItemSize={50}
-          stickyHeaderIndices={data.stickyHeaderIndices}
-        />
-      )}
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        {data && (
+          <FlashList
+            data={data.contacts}
+            renderItem={({ item, target }) => {
+              if (typeof item === "string") {
+                return (
+                  <Text
+                    style={[
+                      styles.sectonHeader,
+                      target ? styles.stickyHeader : {},
+                    ]}
+                  >
+                    {item}
+                  </Text>
+                );
+              }
+              return <ContactCell item={item} />;
+            }}
+            estimatedItemSize={50}
+            stickyHeaderIndices={data.stickyHeaderIndices}
+          />
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
+    paddingHorizontal: 24,
   },
   sectonHeader: {
     fontSize: 20,
