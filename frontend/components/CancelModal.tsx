@@ -5,7 +5,6 @@ import { useRouter } from "expo-router";
 const CancelModal = () => {
   const router = useRouter();
   const onPress = () => {
-    console.log(router.canGoBack());
     if (!router.canGoBack()) {
       router.navigate("/chats");
     }

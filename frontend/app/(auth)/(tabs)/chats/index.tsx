@@ -46,7 +46,7 @@ const rooms = [
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    display: "flex",
+    flex: 1,
     flexDirection: "column",
     gap: 16,
   },
@@ -54,12 +54,12 @@ const styles = StyleSheet.create({
 
 const Page = () => {
   return (
-    <View>
+    <>
       <Stack.Screen options={{ title: "Chats" }} />
       <View style={styles.container}>
         <ChatList rooms={rooms} />
       </View>
-    </View>
+    </>
   );
 };
 
