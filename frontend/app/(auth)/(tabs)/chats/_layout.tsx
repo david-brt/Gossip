@@ -22,6 +22,7 @@ const TabsLayout = () => {
         name="index"
         options={{
           title: "Chats",
+          headerLargeTitle: true,
           headerRight: () => <ChatHeaderRight />,
         }}
       />

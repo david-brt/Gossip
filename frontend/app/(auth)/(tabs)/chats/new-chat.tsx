@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import ContactCell from "../../../../components/ContactCell";
 import * as Contacts from "expo-contacts";
 import { useQuery } from "@tanstack/react-query";
+import ContactCell from "../../../../components/ContactCell";
 import Colors from "../../../../constants/Colors";
 
 async function getContacts() {

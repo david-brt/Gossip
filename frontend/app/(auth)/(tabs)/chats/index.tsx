@@ -1,7 +1,5 @@
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import { GossipHeading } from "../../../../components/text";
 import ChatList from "../../../../components/ChatList";
-import { Stack } from "expo-router";
 
 // dummy rooms
 const rooms = [
@@ -54,12 +52,11 @@ const styles = StyleSheet.create({
 
 const Page = () => {
   return (
-    <>
-      <Stack.Screen options={{ title: "Chats" }} />
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <ChatList rooms={rooms} />
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
