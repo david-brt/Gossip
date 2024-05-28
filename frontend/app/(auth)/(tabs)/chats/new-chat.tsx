@@ -2,8 +2,28 @@ import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import { getContacts } from "../../../../lib/contacts";
+import { Contact } from "expo-contacts";
 import ContactCell from "../../../../components/ContactCell";
 import Colors from "../../../../constants/Colors";
+
+function getBorderRadii(index: number, contacts: (Contact | string)[]) {
+  let styles: any = {};
+
+  if (index === 0) return StyleSheet.create({});
+  const firstInSection = typeof contacts[index - 1] === "string";
+  const isLast = index + 1 === contacts.length;
+  const lastInSection = isLast || typeof contacts[index + 1] === "string";
+
+  if (firstInSection) {
+    styles["borderTopLeftRadius"] = 10;
+    styles["borderTopRightRadius"] = 10;
+  }
+  if (lastInSection) {
+    styles["borderBottomLeftRadius"] = 10;
+    styles["borderBottomRightRadius"] = 10;
+  }
+  return StyleSheet.create(styles);
+}
 
 const NewChat = () => {
   const { data } = useQuery({
@@ -17,7 +37,7 @@ const NewChat = () => {
         {data && (
           <FlashList
             data={data.contacts}
-            renderItem={({ item, target }) => {
+            renderItem={({ item, target, index }) => {
               if (typeof item === "string") {
                 return (
                   <Text
@@ -30,7 +50,12 @@ const NewChat = () => {
                   </Text>
                 );
               }
-              return <ContactCell item={item} />;
+              return (
+                <ContactCell
+                  item={item}
+                  borderRadii={getBorderRadii(index, data.contacts)}
+                />
+              );
             }}
             estimatedItemSize={50}
             stickyHeaderIndices={data.stickyHeaderIndices}
@@ -49,6 +74,7 @@ const styles = StyleSheet.create({
   sectonHeader: {
     fontSize: 20,
     fontWeight: "bold",
+    paddingTop: 8,
   },
   stickyHeader: {
     backgroundColor: Colors.background,
