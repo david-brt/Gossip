@@ -33,16 +33,18 @@ const Layout = () => {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <View
-            style={{
-              paddingTop: insets.top,
-              paddingBottom: insets.bottom,
-              flex: 1,
-              backgroundColor: Colors.background,
-            }}
-          >
-            <Slot />
-          </View>
+          <SQLite.SQLiteProvider databaseName="localdb">
+            <View
+              style={{
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom,
+                flex: 1,
+                backgroundColor: Colors.background,
+              }}
+            >
+              <Slot />
+            </View>
+          </SQLite.SQLiteProvider>
         </AuthProvider>
       </QueryClientProvider>
     </SafeAreaProvider>

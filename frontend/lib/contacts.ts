@@ -60,7 +60,7 @@ export async function getContacts() {
   const { status } = await Contacts.requestPermissionsAsync();
   if (status === "granted") {
     const res = await Contacts.getContactsAsync({
-      fields: [Contacts.Fields.Emails],
+      fields: [Contacts.Fields.Emails, Contacts.Fields.PhoneNumbers],
     });
 
     const indexedContacts = sortAndIndex(res.data);

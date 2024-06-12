@@ -29,7 +29,7 @@ const TabsLayout = () => {
       <Stack.Screen
         name="new-chat"
         options={{
-          title: "New Chat",
+          title: "Neuer Chat",
           presentation: "modal",
           headerSearchBarOptions: {
             placeholder: "Nach Namen suchen",
