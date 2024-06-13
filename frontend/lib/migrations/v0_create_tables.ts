@@ -21,13 +21,13 @@ const create_table_statements = `
   );
 
   CREATE TABLE IF NOT EXISTS chat (
-    chat_id INTEGER PRIMARY KEY,
+    chat_id TEXT PRIMARY KEY,
     name TEXT
   );
 
   CREATE TABLE IF NOT EXISTS message (
     message_id INTEGER PRIMARY KEY,
-    chat_id INTEGER,
+    chat_id TEXT,
     sender_id INTEGER,
     anonymous INTEGER NOT NULL,
     sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,7 +36,7 @@ const create_table_statements = `
   );
 
   CREATE TABLE IF NOT EXISTS chat_user (
-    chat_id INTEGER,
+    chat_id TEXT,
     user_id INTEGER,
     user_role TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
