@@ -1,4 +1,5 @@
 import * as SQLite from "expo-sqlite";
+import { uuidExists } from "../lib/chat";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { randomUUID } from "expo-crypto";
@@ -32,13 +33,15 @@ const ContactCell = ({ item, borderRadii }: ContactCellProps) => {
       WHERE phone_number.number = ?`;
     const rows = await db.getAllAsync(query, number);
     if (rows.length === 0) {
-      const chatId = randomUUID();
+      let chatId: string;
+      do {
+        chatId = randomUUID();
+      } while (await uuidExists(db, chatId));
       return chatId;
     }
   }
 
   const onPress = async () => {
-    console.log(item);
     const chatId = await getChatId();
     router.back();
     router.push({

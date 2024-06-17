@@ -6,7 +6,6 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 const Chat = () => {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
-  console.log(params);
 
   useEffect(() => {
     navigation.setOptions({ title: params.number });
