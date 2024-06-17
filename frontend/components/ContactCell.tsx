@@ -18,16 +18,19 @@ type ContactCellProps = {
 };
 
 const ContactCell = ({ item, borderRadii }: ContactCellProps) => {
-  if (item.phoneNumbers?.length === 0) return null;
+  if (item.phoneNumbers === undefined) return null;
+  if (item.phoneNumbers.length === 0) return null;
+  const number = item.phoneNumbers[0];
   const db = SQLite.useSQLiteContext();
   const router = useRouter();
 
   async function getChatId() {
-    const query = `SELECT * FROM  chat
+    const query = `SELECT chat_id FROM  chat
       NATURAL JOIN chat_user
       NATURAL JOIN user
-      NATURAL JOIN phone_number`;
-    const rows = await db.getAllAsync(query);
+      NATURAL JOIN phone_number
+      WHERE phone_number.number = ?`;
+    const rows = await db.getAllAsync(query, number);
     if (rows.length === 0) {
       const chatId = randomUUID();
       return chatId;
@@ -35,9 +38,13 @@ const ContactCell = ({ item, borderRadii }: ContactCellProps) => {
   }
 
   const onPress = async () => {
+    console.log(item);
     const chatId = await getChatId();
     router.back();
-    router.push({ pathname: "/chats/[uuid]", params: { id: chatId } });
+    router.push({
+      pathname: "/chats/[uuid]",
+      params: { uuid: chatId, number: number.number },
+    });
   };
 
   return (
