@@ -16,7 +16,6 @@ const create_table_statements = `
 
   CREATE TABLE IF NOT EXISTS user (
     user_id INTEGER PRIMARY KEY,
-    phone_number TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
     profile_picture TEXT NOT NULL
   );
@@ -29,6 +28,7 @@ const create_table_statements = `
   CREATE TABLE IF NOT EXISTS message (
     message_id INTEGER PRIMARY KEY,
     chat_id TEXT,
+    text TEXT,
     sender_id INTEGER,
     anonymous INTEGER NOT NULL,
     sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
