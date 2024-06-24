@@ -16,6 +16,7 @@ const create_table_statements = `
 
   CREATE TABLE IF NOT EXISTS user (
     user_id INTEGER PRIMARY KEY,
+    contact_id TEXT UNIQUE,
     name TEXT NOT NULL,
     profile_picture TEXT NOT NULL
   );
