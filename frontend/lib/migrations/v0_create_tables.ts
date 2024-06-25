@@ -6,8 +6,8 @@ const create_table_statements = `
   );
 
   CREATE TABLE IF NOT EXISTS phone_number (
-    country_code TEXT,
-    digits TEXT,
+    country_code TEXT NOT NULL,
+    digits TEXT NOT NULL,
     number TEXT UNIQUE NOT NULL,
     user_id INTEGER,
     PRIMARY KEY (country_code, digits),

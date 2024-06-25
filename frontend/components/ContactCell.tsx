@@ -26,19 +26,28 @@ const ContactCell = ({ item, borderRadii }: ContactCellProps) => {
   const router = useRouter();
 
   async function getChatId() {
-    const query = `SELECT chat_id FROM  chat
+    const query = `
+      SELECT chat_id FROM  chat
       NATURAL JOIN chat_user
       NATURAL JOIN user
       NATURAL JOIN phone_number
-      WHERE phone_number.number = ?`;
-    const rows = await db.getAllAsync(query, number);
-    if (rows.length === 0) {
+      WHERE phone_number.country_code = ? AND phone_number.digits = ?
+    `;
+
+    type Row = { chat_id: string } | null;
+    const row = (await db.getFirstAsync(
+      query,
+      number.countryCode || "",
+      number.digits || "",
+    )) as Row;
+    if (row === null) {
       let chatId: string;
       do {
         chatId = randomUUID();
       } while (await uuidExists(db, chatId));
       return chatId;
     }
+    return row.chat_id;
   }
 
   const onPress = async () => {

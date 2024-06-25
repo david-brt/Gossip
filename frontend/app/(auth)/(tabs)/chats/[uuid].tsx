@@ -1,10 +1,10 @@
 import { useEffect, useCallback } from "react";
-import { View, SafeAreaView } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { getContactByIdAsync } from "expo-contacts";
 import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import { useQuery } from "@tanstack/react-query";
 import { useSQLiteContext } from "expo-sqlite";
+import { createChat } from "../../../../lib/chat";
 
 type MessageResult = {
   anonymous: 0 | 1;
@@ -66,38 +66,6 @@ const Chat = () => {
     queryFn: loadUsername,
   });
 
-  const userExists = async () => {
-    const query = `
-      SELECT * FROM user WHERE contact_id = ?;
-    `;
-    const row = await db.getFirstAsync(query, params.userId as string);
-    return row !== null;
-  };
-
-  const createChat = async () => {
-    if (name === undefined) return;
-    const createChatQuery = `
-      INSERT INTO chat (chat_id, name)
-      VALUES (?, ?);
-    `;
-    await db.runAsync(createChatQuery, params.uuid as string, name);
-    const uuid = params.uuid as string;
-    if (!(await userExists())) {
-      const createUserQuery = `
-        INSERT INTO user (contact_id, name, profile_picture)
-        VALUES (?, ?, ?)
-      `;
-      await db.runAsync(createUserQuery, params.userId as string, name, "");
-    }
-    const createChatUserQuery = `
-      INSERT INTO chat_user (chat_id, user_id)
-      VALUES (?, (
-        SELECT user_id from user WHERE contact_id = ?
-      ));
-    `;
-    await db.runAsync(createChatUserQuery, uuid, params.userId as string);
-  };
-
   const isNewChat = () => {
     if (messages === undefined) return false;
     if (messages.length > 0) {
@@ -108,12 +76,14 @@ const Chat = () => {
 
   const onSend = useCallback(async (messages: IMessage[] = []) => {
     if (isNewChat()) {
-      await createChat();
+      if (name === undefined) return;
+      await createChat(
+        db,
+        params.uuid as string,
+        name,
+        params.userId as string,
+      );
     }
-  }, []);
-
-  useEffect(() => {
-    userExists().then();
   }, []);
 
   return (
