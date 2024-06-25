@@ -55,7 +55,7 @@ const ContactCell = ({ item, borderRadii }: ContactCellProps) => {
     router.back();
     router.push({
       pathname: "/chats/[uuid]",
-      params: { uuid: chatId, userId: item.id, number: number.number },
+      params: { uuid: chatId, contactId: item.id, number: number.number },
     });
   };
 

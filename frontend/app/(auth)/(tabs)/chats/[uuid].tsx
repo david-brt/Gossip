@@ -15,9 +15,15 @@ type MessageResult = {
   text: string;
 };
 
+type Params = {
+  uuid: string;
+  contactId?: string;
+  number?: string;
+};
+
 const Chat = () => {
   const navigation = useNavigation();
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams<Params>();
   const db = useSQLiteContext();
 
   const loadMessages = async () => {
@@ -44,10 +50,10 @@ const Chat = () => {
   };
 
   const loadUsername = async () => {
-    if (params.userId === undefined) {
+    if (params.contactId === undefined) {
       return undefined;
     }
-    const userId = params.userId as string;
+    const userId = params.contactId as string;
     const contact = await getContactByIdAsync(userId, ["name"]);
     navigation.setOptions({ title: contact?.name });
     return contact?.name;
@@ -55,7 +61,7 @@ const Chat = () => {
 
   useEffect(() => {
     navigation.setOptions({ title: params.number });
-  }, [navigation, params.userId]);
+  }, [navigation, params.contactId]);
 
   const { data: messages } = useQuery({
     queryKey: ["messages"],
@@ -81,7 +87,7 @@ const Chat = () => {
         db,
         params.uuid as string,
         name,
-        params.userId as string,
+        params.contactId as string,
       );
     }
   }, []);
