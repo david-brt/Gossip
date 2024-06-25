@@ -5,6 +5,7 @@ import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import { useQuery } from "@tanstack/react-query";
 import { useSQLiteContext } from "expo-sqlite";
 import { createChat } from "../../../../lib/chat";
+import useWebSocket from "react-use-websocket";
 
 type MessageResult = {
   anonymous: 0 | 1;
@@ -22,9 +23,16 @@ type Params = {
 };
 
 const Chat = () => {
+  const socketUrl = process.env.EXPO_PUBLIC_SOCKET_URL;
+  if (!socketUrl) {
+    console.error("Could not find web socket url");
+    return null;
+  }
+
   const navigation = useNavigation();
   const params = useLocalSearchParams<Params>();
   const db = useSQLiteContext();
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
   const loadMessages = async () => {
     if (params.uuid) {
@@ -90,6 +98,7 @@ const Chat = () => {
         params.contactId as string,
       );
     }
+    sendMessage(messages[0].text);
   }, []);
 
   return (
