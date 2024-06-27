@@ -1,10 +1,10 @@
 import { useEffect, useCallback } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { getContactByIdAsync } from "expo-contacts";
+import { randomUUID } from "expo-crypto";
 import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSQLiteContext } from "expo-sqlite";
-import { createChat } from "../../../../lib/chat";
 import useWebSocket from "react-use-websocket";
 
 type MessageResult = {
@@ -78,15 +78,20 @@ const Chat = () => {
   });
 
   useEffect(() => {
-    console.log(lastMessage);
-    // queryClient.setQueryData(["messages"], (oldData) => {
-    //   if (!oldData) return;
-    //   return [...oldData];
-    // });
+    if (lastMessage === null) return;
+    const messageJson = JSON.parse(lastMessage.data);
+    queryClient.setQueryData(["messages"], (oldData: IMessage[]) => {
+      return [messageJson, ...oldData];
+    });
   }, [lastMessage]);
 
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
+
   const onSend = useCallback(async (messages: IMessage[] = []) => {
-    sendMessage(messages[0].text);
+    const stringifiedMessage = JSON.stringify(messages[0]);
+    sendMessage(stringifiedMessage);
   }, []);
 
   return (
