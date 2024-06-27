@@ -2,7 +2,7 @@ import { useEffect, useCallback } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { getContactByIdAsync } from "expo-contacts";
 import { GiftedChat, IMessage } from "react-native-gifted-chat";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSQLiteContext } from "expo-sqlite";
 import { createChat } from "../../../../lib/chat";
 import useWebSocket from "react-use-websocket";
@@ -32,9 +32,10 @@ const Chat = () => {
   const navigation = useNavigation();
   const params = useLocalSearchParams<Params>();
   const db = useSQLiteContext();
+  const queryClient = useQueryClient();
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
-  const loadMessages = async () => {
+  const loadInitialMessages = async () => {
     if (params.uuid) {
       return [];
     }
@@ -57,15 +58,15 @@ const Chat = () => {
     return res;
   };
 
-  const loadUsername = async () => {
+  useEffect(() => {
     if (params.contactId === undefined) {
       return undefined;
     }
     const userId = params.contactId as string;
-    const contact = await getContactByIdAsync(userId, ["name"]);
-    navigation.setOptions({ title: contact?.name });
-    return contact?.name;
-  };
+    const contact = getContactByIdAsync(userId, ["name"]).then((contact) => {
+      navigation.setOptions({ title: contact?.name });
+    });
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({ title: params.number });
@@ -73,37 +74,24 @@ const Chat = () => {
 
   const { data: messages } = useQuery({
     queryKey: ["messages"],
-    queryFn: loadMessages,
-  });
-  const { data: name } = useQuery({
-    queryKey: ["userName"],
-    queryFn: loadUsername,
+    queryFn: loadInitialMessages,
   });
 
-  const isNewChat = () => {
-    if (messages === undefined) return false;
-    if (messages.length > 0) {
-      return false;
-    }
-    return true;
-  };
+  useEffect(() => {
+    console.log(lastMessage);
+    // queryClient.setQueryData(["messages"], (oldData) => {
+    //   if (!oldData) return;
+    //   return [...oldData];
+    // });
+  }, [lastMessage]);
 
   const onSend = useCallback(async (messages: IMessage[] = []) => {
-    if (isNewChat()) {
-      if (name === undefined) return;
-      await createChat(
-        db,
-        params.uuid as string,
-        name,
-        params.contactId as string,
-      );
-    }
     sendMessage(messages[0].text);
   }, []);
 
   return (
     <GiftedChat
-      messages={messages ? messages : []}
+      messages={messages || []}
       onSend={(messages) => onSend(messages)}
       user={{ _id: 1 }}
     />

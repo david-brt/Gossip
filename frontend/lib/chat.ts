@@ -1,4 +1,5 @@
 import { PhoneNumber } from "expo-contacts";
+import { randomUUID } from "expo-crypto";
 import { SQLiteDatabase } from "expo-sqlite";
 import { getContactByIdAsync } from "expo-contacts";
 
@@ -22,16 +23,20 @@ export async function uuidExists(db: SQLiteDatabase, uuid: string) {
 
 export async function createChat(
   db: SQLiteDatabase,
-  uuid: string,
   userName: string,
   contactId: string,
 ) {
-  if (userName === undefined) return;
+  let chatId;
+  do {
+    chatId = randomUUID();
+  } while (await uuidExists(db, chatId));
+
   const createChatQuery = `
       INSERT INTO chat (chat_id, name)
       VALUES (?, ?);
     `;
-  await db.runAsync(createChatQuery, uuid, userName);
+
+  await db.runAsync(createChatQuery, chatId, userName);
   let userId;
   if (!(await userExists(db, contactId))) {
     const contact = await getContactByIdAsync(contactId, ["phoneNumbers"]);
@@ -60,5 +65,24 @@ export async function createChat(
         SELECT user_id from user WHERE contact_id = ?
       ));
     `;
-  await db.runAsync(createChatUserQuery, uuid, contactId as string);
+  await db.runAsync(createChatUserQuery, chatId, contactId as string);
+  return chatId;
+}
+
+export async function getChatId(
+  db: SQLiteDatabase,
+  countryCode: string,
+  digits: string,
+) {
+  const query = `
+      SELECT chat_id FROM  chat
+      NATURAL JOIN chat_user
+      NATURAL JOIN user
+      NATURAL JOIN phone_number
+      WHERE phone_number.country_code = ? AND phone_number.digits = ?
+    `;
+
+  type Row = { chat_id: string } | null;
+  const row = (await db.getFirstAsync(query, countryCode, digits)) as Row;
+  return row?.chat_id;
 }

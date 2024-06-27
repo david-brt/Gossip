@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import { uuidExists } from "../lib/chat";
+import { uuidExists, getChatId, createChat } from "../lib/chat";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { randomUUID } from "expo-crypto";
@@ -21,37 +21,26 @@ type ContactCellProps = {
 const ContactCell = ({ item, borderRadii }: ContactCellProps) => {
   if (item.phoneNumbers === undefined) return null;
   if (item.phoneNumbers.length === 0) return null;
+  if (item.id === undefined) return null;
+
   const number = item.phoneNumbers[0];
   const db = SQLite.useSQLiteContext();
   const router = useRouter();
 
-  async function getChatId() {
-    const query = `
-      SELECT chat_id FROM  chat
-      NATURAL JOIN chat_user
-      NATURAL JOIN user
-      NATURAL JOIN phone_number
-      WHERE phone_number.country_code = ? AND phone_number.digits = ?
-    `;
-
-    type Row = { chat_id: string } | null;
-    const row = (await db.getFirstAsync(
-      query,
+  async function findChatId() {
+    let chatId = await getChatId(
+      db,
       number.countryCode || "",
       number.digits || "",
-    )) as Row;
-    if (row === null) {
-      let chatId: string;
-      do {
-        chatId = randomUUID();
-      } while (await uuidExists(db, chatId));
-      return chatId;
+    );
+    if (chatId === undefined) {
+      chatId = await createChat(db, item.name, item.id as string);
     }
-    return row.chat_id;
+    return chatId;
   }
 
   const onPress = async () => {
-    const chatId = await getChatId();
+    const chatId = await findChatId();
     router.back();
     router.push({
       pathname: "/chats/[uuid]",
