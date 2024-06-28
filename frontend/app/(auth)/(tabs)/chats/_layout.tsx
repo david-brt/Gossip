@@ -26,7 +26,6 @@ const TabsLayout = () => {
           headerRight: () => <ChatHeaderRight />,
         }}
       />
-      <Stack.Screen name="[uuid]" options={{ title: "Chat" }} />
       <Stack.Screen
         name="new-chat"
         options={{
